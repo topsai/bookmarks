@@ -1,26 +1,44 @@
 {% extends 'base.html' %}
-
+{% load tag %}
 {% block title %}Log-in{% endblock %}
-
 {% block content %}
-    <h1>Log-in</h1>
-    {% if form.errors %}
-        <p>
-            Your username and password didn't match.
-            Please try again.
-        </p>
-    {% else %}
-        <p>Please, use the following form to log-in:</p>
-    {% endif %}
-
-    <div class="login-form">
-        <form action="{% url 'login' %}" method="post">
-            {{ form.as_p }}
-            {% csrf_token %}
-            <input type="hidden" name="next" value="{{ next }}">
-            <p><input type="submit" value="Log-in"></p>
-        </form>
-        <p><a href="{% url 'password_reset' %}">Forgotten your password?</a></p>
-    </div>
+    <form class="user" action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        {% if form.errors %}
+            <p>
+                Your username and password didn't match.
+                Please try again.
+            </p>
+        {% endif %}
+        <div class="form-group">
+            {% for i in form %}
+                <div class="form-group">
+                    <label for="{{ i.id_for_label }}">{{ i.label }}</label>
+                    {{ i.errors }}
+                    {{ i.help_text }}
+                    <input type="{{ i.field.widget.input_type }}"
+                           class="form-control form-control-user"
+                           name="{{ i.name }}"
+                           id="{{ i.auto_id }}"
+                           placeholder="{{ i.name.upper }}"
+                            {% if i.field.widget.is_required %}
+                           required
+                            {% endif %}
+                           maxlength="{{ i.field.max_length }}"
+                    >
+                </div>
+            {% endfor %}
+        </div>
+        <button type="submit" class="btn btn-primary btn-user btn-block">
+            Login
+        </button>
+        {#        <hr>#}
+        {#        <button class="btn btn-google btn-user btn-block">#}
+        {#            <i class="fab fa-google fa-fw"></i> Login with Google#}
+        {#        </button>#}
+        {#        <a href="index.html" class="btn btn-facebook btn-user btn-block">#}
+        {#            <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook#}
+        {#        </a>#}
+    </form>
 
 {% endblock %}
